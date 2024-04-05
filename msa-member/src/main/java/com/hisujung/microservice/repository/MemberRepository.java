@@ -1,6 +1,7 @@
 package com.hisujung.microservice.repository;
 
-import com.hisujung.web.entity.Member;
+
+import com.hisujung.microservice.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

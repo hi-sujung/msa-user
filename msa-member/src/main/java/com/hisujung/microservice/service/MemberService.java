@@ -1,7 +1,7 @@
 package com.hisujung.microservice.service;
 
 
-import com.hisujung.web.dto.MemberSignupRequestDto;
+import com.hisujung.microservice.dto.MemberSignupRequestDto;
 
 public interface MemberService {
     //회원가입
