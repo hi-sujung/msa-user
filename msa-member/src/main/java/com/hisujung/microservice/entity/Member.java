@@ -33,9 +33,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private List<Portfolio> portfolioList = new ArrayList<>();
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+//    private List<Portfolio> portfolioList = new ArrayList<>();
 
     public boolean checkPassword(PasswordEncoder passwordEncoder, String inputPassword) {
         return passwordEncoder.matches(inputPassword, this.password);

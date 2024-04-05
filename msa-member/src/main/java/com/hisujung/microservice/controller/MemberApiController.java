@@ -1,13 +1,15 @@
 package com.hisujung.microservice.controller;
 
 
-import com.hisujung.web.dto.LoginRequestDto;
-import com.hisujung.web.dto.MemberSignupRequestDto;
-import com.hisujung.web.entity.Member;
-import com.hisujung.web.jwt.JwtTokenUtil;
-import com.hisujung.web.mail.MailSender;
-import com.hisujung.web.service.MemberService;
-import com.hisujung.web.service.UserService;
+
+import ch.qos.logback.classic.Logger;
+import com.hisujung.microservice.dto.LoginRequestDto;
+import com.hisujung.microservice.dto.MemberSignupRequestDto;
+import com.hisujung.microservice.entity.Member;
+import com.hisujung.microservice.jwt.JwtTokenUtil;
+import com.hisujung.microservice.mail.MailSender;
+import com.hisujung.microservice.service.MemberService;
+import com.hisujung.microservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,8 +31,6 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final UserService userService;
-//    private final MemberServicelmpl memberServicelmpl;
-    //private final EmailService emailService;
     private final MailSender mailSender;
     @Value("${jwt.secret}")
     private String secretKey;
@@ -39,7 +38,6 @@ public class MemberApiController {
     @PostMapping("/join")
     public Long join(@RequestBody MemberSignupRequestDto requestDto) throws Exception {
         return memberService.join(requestDto);
-        //return 1L;
     }
 
     @PostMapping("/join/mailConfirm")
@@ -62,45 +60,7 @@ public class MemberApiController {
         }
         return message;
     }
-//
-//    @PostMapping("/emails/verification-requests")
-//    public ResponseEntity sendMessage(@RequestParam("email") @Valid @CustomEmail String email) {
-//        memberServicelmpl.sendCodeToEmail(email);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/emails/verifications")
-//    public ResponseEntity verificationEmail(@RequestParam("email") @Valid @CustomEmail String email,
-//                                            @RequestParam("code") String authCode) {
-//        EmailVerificationResult response = memberServicelmpl.verifiedCode(email, authCode);
-//
-//        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
-//    }
 
-//    @PostMapping("/login")
-//    public String login(@RequestBody Map<String, String> member) {
-//        return memberService.login(member);
-//    }
-
-//    @PostMapping("/login")
-//    public String login(@RequestBody LoginRequestDto loginRequestDto) {
-//
-//        Member user = userService.login(loginRequestDto);
-//
-//        //로그인 아이디나 비밀번호가 틀린 경우 global error return
-//        if(user == null) {
-//            return "로그인 아이디 또는 비밀번호가 틀렸습니다.";
-//        }
-//
-//        //로그인 성공 => Jwt Token 발급
-//
-//        long expireTimeMs = 1000 * 60 * 60 * 8; //Token 유효 시간 = 8시간
-//
-//        String jwtToken = JwtTokenUtil.createToken(loginRequestDto.getEmail(), secretKey, expireTimeMs);
-//
-//        return jwtToken;
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequestDto loginRequestDto) {
@@ -114,7 +74,7 @@ public class MemberApiController {
         String jwtToken = JwtTokenUtil.createToken(loginRequestDto.getEmail(), secretKey, expireTimeMs);
 
         // 사용자 정보를 JSON 형태로 리턴
-        Map<String, Object> response = new HashMap<>();
+        HashMap<String, Object> response = new HashMap<>();
         response.put("userId", user.getId());
         response.put("token", jwtToken);
         response.put("email", user.getEmail());

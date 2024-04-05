@@ -1,6 +1,7 @@
 package com.hisujung.microservice.mail;
 
-import com.hisujung.web.Util.RedisUtil;
+
+import com.hisujung.microservice.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
@@ -85,15 +86,6 @@ public class MailSender {
             e.printStackTrace();
             //return ePw;
         }
-
-
-//        } catch (AddressException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchProviderException e) {
-//            e.printStackTrace();
-//        } catch (MessagingException e) {
-//            e.printStackTrace();
-//        }
         return ePw;
     }
 

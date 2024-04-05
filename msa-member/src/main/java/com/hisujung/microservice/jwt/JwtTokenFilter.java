@@ -1,7 +1,8 @@
 package com.hisujung.microservice.jwt;
 
-import com.hisujung.web.entity.Member;
-import com.hisujung.web.service.UserService;
+
+import com.hisujung.microservice.entity.Member;
+import com.hisujung.microservice.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

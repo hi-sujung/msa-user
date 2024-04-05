@@ -1,6 +1,7 @@
-package com.hisujung.web.config;
+package com.hisujung.microservice.config;
 
-import com.hisujung.web.jwt.LoginUserArgumentResolver;
+
+import com.hisujung.microservice.jwt.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

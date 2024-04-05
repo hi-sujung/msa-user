@@ -1,11 +1,11 @@
 package com.hisujung.microservice.service;
 
 
-import com.hisujung.web.dto.MemberSignupRequestDto;
-import com.hisujung.web.entity.Member;
-import com.hisujung.web.exception.BusinessLogicException;
-import com.hisujung.web.exception.ExceptionCode;
-import com.hisujung.web.jpa.MemberRepository;
+import com.hisujung.microservice.dto.MemberSignupRequestDto;
+import com.hisujung.microservice.entity.Member;
+import com.hisujung.microservice.exception.BusinessLogicException;
+import com.hisujung.microservice.exception.ExceptionCode;
+import com.hisujung.microservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +24,8 @@ import java.util.Random;
 public class MemberServicelmpl implements MemberService{
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;;
+    private final PasswordEncoder passwordEncoder;
+    private final RedisService redisService;
 
     @Transactional
     @Override
@@ -44,30 +45,6 @@ public class MemberServicelmpl implements MemberService{
 
         return member.getId();
     }
-
-//    @Override
-//    public String login(Map<String, String> members) {
-//
-//        Member member = memberRepository.findByEmail(members.get("email"))
-//                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 Email 입니다."));
-//
-//        String password = members.get("password");
-//        if (!member.checkPassword(passwordEncoder, password)) {
-//            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-//        }
-//
-//        List<String> roles = new ArrayList<>();
-//        roles.add(member.getRole().name());
-//
-//        return jwtTokenProvider.createToken(member.getUsername(), roles);
-//    }
-
-   // private final MailService mailService;
-    private final RedisService redisService;
-
-//    @Value("${spring.mail.auth-code-expiration-millis}")
-//    private long authCodeExpirationMillis;
-    //e86dd9602bdb425584bb3fb1af3da13a
 
 
     @Transactional
@@ -89,15 +66,6 @@ public class MemberServicelmpl implements MemberService{
         return member.getId();
     }
 
-//    public void sendCodeToEmail(String toEmail) {
-//        this.checkDuplicatedEmail(toEmail);
-//        String title = "Travel with me 이메일 인증 번호";
-//        String authCode = this.createCode();
-//        mailService.sendEmail(toEmail, title, authCode);
-//        // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
-//        redisService.setValues(AUTH_CODE_PREFIX + toEmail,
-//                authCode, Duration.ofMillis(this.authCodeExpirationMillis));
-//    }
 
     private void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
@@ -121,15 +89,4 @@ public class MemberServicelmpl implements MemberService{
             throw new BusinessLogicException(ExceptionCode.NO_SUCH_ALGORITHM);
         }
     }
-
-//    public EmailVerificationResult verifiedCode(String email, String authCode) {
-//        this.checkDuplicatedEmail(email);
-//        String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-//        boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
-//
-//        return EmailVerificationResult.of(authResult);
-//    }
-
-
-
 }

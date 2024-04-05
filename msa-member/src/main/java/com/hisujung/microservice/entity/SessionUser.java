@@ -1,4 +1,4 @@
-package com.hisujung.web.entity;
+package com.hisujung.microservice.entity;
 
 import lombok.Getter;
 import java.io.Serializable;

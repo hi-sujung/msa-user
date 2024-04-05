@@ -1,7 +1,8 @@
 package com.hisujung.microservice.jwt;
 
-import com.hisujung.web.annotation.LoginUser;
-import com.hisujung.web.entity.SessionUser;
+
+import com.hisujung.microservice.annotation.LoginUser;
+import com.hisujung.microservice.entity.SessionUser;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;

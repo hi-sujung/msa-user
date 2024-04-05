@@ -1,4 +1,4 @@
-package com.hisujung.web.annotation;
+package com.hisujung.microservice.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

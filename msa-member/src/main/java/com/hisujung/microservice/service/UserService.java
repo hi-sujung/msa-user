@@ -1,8 +1,8 @@
 package com.hisujung.microservice.service;
 
-import com.hisujung.web.dto.LoginRequestDto;
-import com.hisujung.web.entity.Member;
-import com.hisujung.web.jpa.MemberRepository;
+import com.hisujung.microservice.dto.LoginRequestDto;
+import com.hisujung.microservice.entity.Member;
+import com.hisujung.microservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

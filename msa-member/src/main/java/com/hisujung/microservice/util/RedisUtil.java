@@ -1,4 +1,4 @@
-package com.hisujung.web.Util;
+package com.hisujung.microservice.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

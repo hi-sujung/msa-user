@@ -1,4 +1,4 @@
-package com.hisujung.web.config;
+package com.hisujung.microservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;

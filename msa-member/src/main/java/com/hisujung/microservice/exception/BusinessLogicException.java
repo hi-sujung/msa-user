@@ -1,4 +1,4 @@
-package com.hisujung.web.exception;
+package com.hisujung.microservice.exception;
 
 import lombok.Getter;
 
