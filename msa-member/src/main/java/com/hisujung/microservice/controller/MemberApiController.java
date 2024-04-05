@@ -7,15 +7,20 @@ import com.hisujung.microservice.dto.LoginRequestDto;
 import com.hisujung.microservice.dto.MemberSignupRequestDto;
 import com.hisujung.microservice.entity.Member;
 import com.hisujung.microservice.jwt.JwtTokenUtil;
-import com.hisujung.microservice.mail.MailSender;
+//import com.hisujung.microservice.mail.MailSender;
 import com.hisujung.microservice.service.MemberService;
 import com.hisujung.microservice.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,25 +45,38 @@ public class MemberApiController {
         return memberService.join(requestDto);
     }
 
-    @PostMapping("/join/mailConfirm")
-    @ResponseBody
-    public String mailConfirm(@RequestParam String email) throws Exception {
-        log.info(email);
-        String code = mailSender.send(email);
-        log.info("인증코드 : " + code);
-        return code;
+//    @PostMapping("/join/mailConfirm")
+//    @ResponseBody
+//    public String mailConfirm(@RequestParam String email) throws Exception {
+//        log.info(email);
+//        String code = mailSender.send(email);
+//        log.info("인증코드 : " + code);
+//        return code;
+//    }
+
+//    @GetMapping("/join/verify/{key}")
+//    public String getVerify(@PathVariable String key) {
+//        String message;
+//        try {
+//            mailSender.verifyEmail(key);
+//            message = "인증에 성공하였습니다.";
+//        } catch (Exception e) {
+//            message = "인증에 실패하였습니다.";
+//        }
+//        return message;
+//    }
+
+    @PostMapping("/members/email")
+    public ResponseEntity<Void> authEmail(@RequestBody @Valid EmailRequest request) {
+        memberService.authEmail(request);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/join/verify/{key}")
-    public String getVerify(@PathVariable String key) {
-        String message;
-        try {
-            mailSender.verifyEmail(key);
-            message = "인증에 성공하였습니다.";
-        } catch (Exception e) {
-            message = "인증에 실패하였습니다.";
-        }
-        return message;
+    @Data
+    public class EmailRequest {
+        @Email
+        @NotBlank(message = "이메일(필수)")
+        private String email;
     }
 
 
