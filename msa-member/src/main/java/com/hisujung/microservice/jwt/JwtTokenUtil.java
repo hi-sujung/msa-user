@@ -13,18 +13,16 @@ import java.util.Date;
 //새로운 Jwt 토큰 발급, Jwt 토큰의 Claim에서 "loginId" 꺼내기, 만료시간 체크 기능 수행
 public class JwtTokenUtil {
 
-
     //JWT Token 발급
     public static String createToken(String loginId, String key_, long expireTimeMs) {
-        // Claim = Jwt Token 에 들어갈 정보
-        // Claim에 loginId를 넣어줌으로써 나중에 loginId를 꺼낼 수 있음
+        // Claim = Jwt Token에 들어갈 정보
+        // Claim에 loginId를 넣어줌으로써 나중에 loginId를 꺼낼 수 있음.
         Claims claims = Jwts.claims();
         claims.put("loginId", loginId);
 
         byte[] keyBytes = Decoders.BASE64.decode(key_);
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
-        //Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -48,6 +46,7 @@ public class JwtTokenUtil {
 
     //SecretKey를 사용해 Token Parsing
     private static Claims extractClaims(String token, String secretKey) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Jwts.parserBuilder().setSigningKey(keyBytes).build().parseClaimsJws(token).getBody();
     }
 }

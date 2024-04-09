@@ -1,93 +1,93 @@
-//package com.hisujung.microservice.config;
-//
-//
-//import com.hisujung.microservice.entity.Role;
-//import com.hisujung.microservice.jwt.JwtTokenFilter;
-//import com.hisujung.microservice.service.UserService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.context.annotation.Lazy;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//
-//
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfig {
-//
-//    private final UserService userService;
-//    @Value("${jwt.secret}")
-//    private String secretKey;
-//
+package com.hisujung.microservice.config;
+
+import com.hisujung.microservice.jwt.JwtTokenFilter;
+import com.hisujung.microservice.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+
+@Configuration
+@RequiredArgsConstructor
+@EnableWebSecurity
+public class SecurityConfig {
+//    private final CustomUserDetailsService customUserDetailsService;
+//    private final JwtUtils jwtUtils;
+//    private final CustomAccessDeniedHandler accessDeniedHandler;
+//    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    private final UserService loginService;
+    @Value("${jwt.secret}")
+    private String secretKey;
+
 //    @Autowired
-//    public SecurityConfig(@Lazy UserService userService) {
+//    public SecurityConfig(@Lazy LoginService loginService) {
 //        this.userService = userService;
 //    }
 //
-//
-//    @Bean
-//    public BCryptPasswordEncoder encoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//            .formLogin().disable()
-//            .httpBasic().disable()
-//            .cors().disable()
-//            .csrf().disable()
-//            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//            .and()
-//            .addFilterBefore(new JwtTokenFilter(userService, secretKey), UsernamePasswordAuthenticationFilter.class)
-//            .authorizeHttpRequests()
-//            .requestMatchers("/portfolio/**").permitAll()
-//            .requestMatchers("/portfolio/portfoliolist").permitAll()
-//            .requestMatchers("/portfolio/portfoliolist").authenticated()
-//            .requestMatchers("/hello").permitAll()
-//            .requestMatchers("/member/login").permitAll()
-//            .requestMatchers("/member/info").permitAll()
-//            .requestMatchers("/member/join").permitAll()
-//            .requestMatchers("/member/join/mailConfirm").permitAll()
-//            .requestMatchers("/member/join/verify/*").permitAll()
-//            .requestMatchers("/").permitAll()
-//            //.requestMatchers("member/portfoliolist").permitAll()
-//            .requestMatchers("/v*/api-docs/**").permitAll()
-//            .requestMatchers("/swagger*/**").permitAll()
-//            //.requestMatchers("/**/*").permitAll()
-//            .requestMatchers("/swagger-ui/index.html/* ").permitAll()
-//            .requestMatchers("/member").hasRole("USER")
-//            .requestMatchers("/member/info").authenticated()
-//            .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
-//            .anyRequest().permitAll();
-//        return http.build();
-//    }
-//
+
 //    @Bean
 //    public PasswordEncoder passwordEncoder(){
 //        PasswordEncoder encoder = new BCryptPasswordEncoder();
 //        return encoder;
 //    }
+
+//    @Bean
+//    public Storage storage() {
+//        return StorageOptions.getDefaultInstance().getService();
+//    }
+
+//    @Bean
+//    public BCryptPasswordEncoder encoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+
+    private static final String[] AUTH_WHITELIST = {
+            "/oauth2/**", "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui/index.html",
+            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/v1/auth/**", "/api/user/**", "/api/**", "/login/**", "/image/**"
+    };
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        //CSRF, CORS
+        http.csrf((csrf) -> csrf.disable());
+        http.cors(Customizer.withDefaults());
+
+        //세션 관리 상태 없음으로 구성, Spring Security가 세션 생성 or 사용 X
+        http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
+                SessionCreationPolicy.STATELESS));
+
+        http.addFilterBefore(new JwtTokenFilter(loginService, secretKey), UsernamePasswordAuthenticationFilter.class);
+
+        //FormLogin, BasicHttp 비활성화
+        http.formLogin((form) -> form.disable());
+        http.httpBasic(AbstractHttpConfigurer::disable);
+
+
+//        //JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
+//        http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class);
 //
-//    private static final String[] AUTH_WHITELIST = {
-//            "/v2/api-docs",
-//            "/v3/api-docs/**",
-//            "/configuration/ui",
-//            "/swagger-resources/**",
-//            "/configuration/security",
-//            "/swagger-ui.html",
-//            "/webjars/**",
-//            "/file/**",
-//            "/image/**",
-//            "/swagger/**",
-//            "/swagger-ui/**",
-//            "/h2/**"
-//    };
-//}
+//        http.exceptionHandling((exceptionHandling) -> exceptionHandling
+//                .authenticationEntryPoint(authenticationEntryPoint)
+//                .accessDeniedHandler(accessDeniedHandler)
+//        );
+
+        // 권한 규칙 작성
+        http.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
+                        .anyRequest().permitAll()
+//                        .anyRequest().authenticated()
+        );
+
+        return http.build();
+    }
+
+}

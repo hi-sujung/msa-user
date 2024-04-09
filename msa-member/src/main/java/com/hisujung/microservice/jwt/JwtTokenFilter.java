@@ -1,7 +1,7 @@
 package com.hisujung.microservice.jwt;
 
-
 import com.hisujung.microservice.entity.Member;
+import com.hisujung.microservice.jwt.JwtTokenUtil;
 import com.hisujung.microservice.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -63,5 +63,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         //권한 부여
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
+
     }
 }
