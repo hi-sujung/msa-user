@@ -7,7 +7,7 @@ import com.hisujung.microservice.dto.LoginRequestDto;
 import com.hisujung.microservice.dto.MemberSignupRequestDto;
 import com.hisujung.microservice.entity.Member;
 import com.hisujung.microservice.jwt.JwtTokenUtil;
-import com.hisujung.microservice.mail.MailSender;
+//import com.hisujung.microservice.mail.MailSender;
 import com.hisujung.microservice.service.MemberService;
 import com.hisujung.microservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final UserService userService;
-    private final MailSender mailSender;
+//    private final MailSender mailSender;
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -40,26 +40,26 @@ public class MemberApiController {
         return memberService.join(requestDto);
     }
 
-    @PostMapping("/join/mailConfirm")
-    @ResponseBody
-    public String mailConfirm(@RequestParam String email) throws Exception {
-        log.info(email);
-        String code = mailSender.send(email);
-        log.info("인증코드 : " + code);
-        return code;
-    }
+//    @PostMapping("/join/mailConfirm")
+//    @ResponseBody
+//    public String mailConfirm(@RequestParam String email) throws Exception {
+//        log.info(email);
+//        String code = mailSender.send(email);
+//        log.info("인증코드 : " + code);
+//        return code;
+//    }
 
-    @GetMapping("/join/verify/{key}")
-    public String getVerify(@PathVariable String key) {
-        String message;
-        try {
-            mailSender.verifyEmail(key);
-            message = "인증에 성공하였습니다.";
-        } catch (Exception e) {
-            message = "인증에 실패하였습니다.";
-        }
-        return message;
-    }
+//    @GetMapping("/join/verify/{key}")
+//    public String getVerify(@PathVariable String key) {
+//        String message;
+//        try {
+//            mailSender.verifyEmail(key);
+//            message = "인증에 성공하였습니다.";
+//        } catch (Exception e) {
+//            message = "인증에 실패하였습니다.";
+//        }
+//        return message;
+//    }
 
 
     @PostMapping("/login")
