@@ -50,8 +50,7 @@ public class SecurityConfig {
 //    }
 
     private static final String[] AUTH_WHITELIST = {
-            "/oauth2/**", "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui/index.html",
-            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/v1/auth/**", "/api/user/**", "/api/**", "/login/**", "/image/**"
+        "/member/**",
     };
 
     @Bean
