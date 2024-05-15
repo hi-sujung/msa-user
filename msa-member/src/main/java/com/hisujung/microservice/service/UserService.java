@@ -2,15 +2,19 @@ package com.hisujung.microservice.service;
 
 import com.hisujung.microservice.dto.LoginRequestDto;
 import com.hisujung.microservice.entity.Member;
+import com.hisujung.microservice.jwt.JwtTokenUtil;
 import com.hisujung.microservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ public class UserService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate redisTemplate;
+    private final JwtTokenUtil jwtTokenUtil;
 
     public Member getLoginUserByLoginId(String loginId) {
         return memberRepository.findByEmail(loginId).orElseThrow(() -> new IllegalStateException("해당되는 회원이 존재하지 않습니다."));
@@ -40,5 +46,12 @@ public class UserService {
         roles.add(member.getRole().name());
 
         return member;
+    }
+
+    public void logout(String accessToken) {
+        Long expiration = jwtTokenUtil.getExpiration(accessToken);
+
+        redisTemplate.opsForValue()
+                .set(accessToken, "blackList", expiration, TimeUnit.MILLISECONDS);
     }
 }

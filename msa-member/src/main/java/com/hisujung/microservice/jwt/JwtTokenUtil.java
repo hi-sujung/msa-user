@@ -5,13 +5,18 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Key;
+import java.security.SignatureException;
 import java.util.Date;
 
 //Jwt 토큰 방식을 사용할 때 필요한 기능들을 정리해놓은 클래스
 //새로운 Jwt 토큰 발급, Jwt 토큰의 Claim에서 "loginId" 꺼내기, 만료시간 체크 기능 수행
 public class JwtTokenUtil {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     //JWT Token 발급
     public static String createToken(String loginId, String key_, long expireTimeMs) {
@@ -42,6 +47,20 @@ public class JwtTokenUtil {
 
         //Token의 만료 날짜가 지금보다 이전인지 check
         return expiredDate.before(new Date());
+    }
+
+    public Long getExpiration(String accessToken) {
+
+        try {
+            // accessToken 남은 유효시간
+            Date expiration = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(accessToken).getBody().getExpiration();
+            Long now = new Date().getTime();
+
+            // accessToken 의 현재 남은 시간 반환
+            return (expiration.getTime() - now);
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            throw new io.jsonwebtoken.security.SignatureException("토큰이 유효하지 않습니다.");
+        }
     }
 
     //SecretKey를 사용해 Token Parsing
