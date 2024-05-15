@@ -8,11 +8,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final UserService userService;
     private final String secretKey;
+    private final RedisTemplate redisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,19 +52,27 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        //Jwt Token에서 loginId 추출
-        String loginId = JwtTokenUtil.getLoginId(token, secretKey);
+        String isBlackList = (String)redisTemplate.opsForValue().get(token);
 
-        //추출된 loginId로 Member 찾아오기
-        Member loginUser = userService.getLoginUserByLoginId(loginId);
+        // 블랙리스트에 해당 토큰이 존재하지 않을 경우
+        if (ObjectUtils.isEmpty(isBlackList)) {
 
-        //loginUser 정보로 UsernamePasswordAuthenticationToken 발급
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginUser.getEmail(), null, List.of(new SimpleGrantedAuthority(loginUser.getRole().name())));
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // 토큰이 유효하면 토큰으로부터 유저 정보를 받아옴
+            //Jwt Token에서 loginId 추출
+            String loginId = JwtTokenUtil.getLoginId(token, secretKey);
 
-        //권한 부여
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            //추출된 loginId로 Member 찾아오기
+            Member loginUser = userService.getLoginUserByLoginId(loginId);
+
+            //loginUser 정보로 UsernamePasswordAuthenticationToken 발급
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    loginUser.getEmail(), null, List.of(new SimpleGrantedAuthority(loginUser.getRole().name())));
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            //권한 부여
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+
         filterChain.doFilter(request, response);
 
     }

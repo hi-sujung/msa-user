@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -82,6 +83,15 @@ public class MemberApiController {
 
         log.info("hihihibye");
         return ResponseEntity.ok(response);
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String accessToken) {
+
+        userService.logout(accessToken);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("info")
