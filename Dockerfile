@@ -1,6 +1,7 @@
 FROM openjdk:17-jdk-slim as build
 WORKDIR /app
 COPY . .
+RUN chmod +x gradlew
 RUN ./gradlew clean build
 
 FROM openjdk:17-jdk-slim
