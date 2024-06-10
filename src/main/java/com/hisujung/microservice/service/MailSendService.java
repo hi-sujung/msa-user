@@ -49,7 +49,7 @@ public class MailSendService {
         String toMail = email;
         String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
         String content =
-                "나의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
+                "하이수정의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
                         "<br><br>" +
                         "인증 번호는 " + authNumber + "입니다." +
                         "<br>" +
@@ -73,7 +73,7 @@ public class MailSendService {
             // 이러한 경우 MessagingException이 발생
             e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
         }
-        redisUtil.setDataExpire(Integer.toString(authNumber),toMail,60*5L);
+//        redisUtil.setDataExpire(Integer.toString(authNumber),toMail,60*5L);
 
     }
 }
